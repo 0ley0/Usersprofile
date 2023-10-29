@@ -1,0 +1,121 @@
+@page "/UserProfile"
+@* @page "/UserProfile/{id:int}" *@
+@using ProLoginprofile.Models.Entities
+
+
+
+<PageTitle>USERSPROFILE</PageTitle>
+
+@if (!ShowEditRole)
+{
+    if (AllUsers == null)
+    {
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    }
+    else
+    {
+        
+            <MudTable @ref="@_table" RowsPerPage="@pageSize" Items="@AllUsers" Breakpoint="Breakpoint.Sm"  Hover="true" Elevation="0">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">UsersProfile</MudText>
+                    <MudSpacer/>
+                    <MudTextField  Placeholder="Search"
+                    Adornment="Adornment.Start" 
+                    AdornmentIcon="@Icons.Material.Filled.Search" 
+                    IconSize="Size.Medium" T="string" ValueChanged="@(s=>Indexs(s))"
+                    Class="mt-0"></MudTextField>
+                    @* <MudButton ButtonType="ButtonType.Submit"
+                    OnClick="@(()=>Indexs(searchString))"
+                    Variant="Variant.Filled" 
+                    Color="Color.Primary" 
+                    Class="ml-auto">Search</MudButton> *@
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>ID</MudTh>
+                    <MudTh>Name</MudTh>
+                    <MudTh>Email</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID">@context.id</MudTd>
+                    <MudTd DataLabel="Name">@context.login</MudTd>
+                    <MudTd DataLabel="Email">@context.email</MudTd>
+                    <MudTd>
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" OnClick="@(()=>GoToEditUser(context.id,context.login))" ></MudFab>
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudPagination Class="pa-4" Selected="@pageon"
+                    SelectedChanged="@PageChangAsync"
+                    BoundaryCount="1" MiddleCount="2"
+                    Count="@(((dataCount-1)/_table.RowsPerPage)+1)"></MudPagination>
+                </PagerContent>
+            </MudTable>
+       
+    }
+   
+}
+else
+{
+    if (ListProgramUsers == null)
+    {
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+    }
+    else
+    {
+        <MudPaper Class="mx-auto pa-4" Elevation="0">
+        <MudGrid>
+            <MudItem>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudGrid>
+                                <MudText>Edit Role User : @namese</MudText>
+                                <MudButton  Variant="Variant.Filled"  Color="Color.Info"
+                                   StartIcon="@Icons.Material.Filled.Save" Class="mx-4">Save</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Secondary"
+                                   StartIcon="@Icons.Material.Filled.Cancel" OnClick="@Cancel" Class="mx-4">Cancel</MudButton>
+                        </MudGrid>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid >
+                        <MudItem xs="3" >
+                            <P>Role currently used</P>
+                            <MudSwitch @bind-Checked="@_checked3" ThumbIcon="@(_checked3==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(_checked3==true ? Color.Success : Color.Error)">บันทึกใบสั่งขาย</MudSwitch>
+                            <MudSwitch @bind-Checked="@_checked4" ThumbIcon="@(_checked4==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(_checked4==true ? Color.Success : Color.Error)"  >บันทึกใบขอผลิต</MudSwitch>
+
+                            <ul>
+                                @foreach (var item in ListProgramUsers)
+                                {
+                                    <li>@item.name</li>
+                                }
+                            </ul>
+                        </MudItem>
+                        <MudItem xs="3" >
+                            <p>All Role</p>
+                            <ul>
+                                @foreach (var item in ListAllProgramUsers)
+                                {
+                                    <li>@item.name</li>
+                                }
+                            </ul>
+                        </MudItem>
+                        <MudItem xs="3" >
+                            <p>Role that doesn't have</p>
+                            <ul>
+                                @foreach (var item in datadup)
+                                {
+                                    <li>@item.name</li>
+                                }
+                            </ul>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+    }
+    
+}
