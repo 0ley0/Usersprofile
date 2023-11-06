@@ -31,8 +31,22 @@ namespace ProLoginprofile.Pages.Pagecomponents
        
 
         private Users User = new();
-        public bool? _checked3 { get; set; } = false;
-        public bool? _checked4 { get; set; } = false;
+
+        public bool? Repair_Informations { get; set; } = false;
+        public bool? Repair_Informations_AdminIn { get; set; } = false;
+        public bool? Customers { get; set; } = false;
+        public bool? Sale_Orders { get; set; } = false;
+        public bool? Request_Modifies { get; set; } = false;
+        public bool? Employees { get; set; } = false;
+        public bool? Battery_Brands { get; set; } = false;
+        public bool? Battery_Models { get; set; } = false;
+        public bool? Models { get; set; } = false;
+        public bool? Departments { get; set; } = false;
+        public bool? Grades { get; set; } = false;
+        public bool? PMs { get; set; } = false;
+        public bool? Sale_Areas { get; set; } = false;
+        public bool? Sale_Teams { get; set; } = false;
+        public bool? Statuses { get; set; }
 
         private bool ShowEditRole = false;
         private string? namese;
@@ -120,20 +134,51 @@ namespace ProLoginprofile.Pages.Pagecomponents
 
         private async Task SetCheckedToTrue()
         {
-            foreach (var item in ListProgramUsers)
+           
+
+            foreach (var items in ListProgramUsers)
             {
-                if (item.id != null)
+                
+                if (items.id == items.id)
                 {
-                    _checked3 = true;
-                    _checked4 = true;
+                    Repair_Informations = true;
+                    Repair_Informations_AdminIn = true;
+                    Customers  = true;
+                    Sale_Orders  = true;
+                    Request_Modifies  = true;
+                    Employees  = true;
+                    Battery_Brands  = true;
+                    Battery_Models  = true;
+                    Models  = true;
+                    Departments  = true;
+                    Grades  = true;
+                    PMs  = true;
+                    Sale_Areas  = true;
+                    Sale_Teams  = true;
+                    Statuses = true;
                     
                 }
                 else
                 {
-                    _checked3 = false;
-                    _checked4 = false;
+                    Repair_Informations = false;
+                    Repair_Informations_AdminIn = false;
+                    Customers  = false;
+                    Sale_Orders  = false;
+                    Request_Modifies  = false;
+                    Employees  = false;
+                    Battery_Brands  = false;
+                    Battery_Models  = false;
+                    Models  = false;
+                    Departments  = false;
+                    Grades  = false;
+                    PMs  = false;
+                    Sale_Areas  = false;
+                    Sale_Teams  = false;
+                    Statuses = false;
                 }
             }
+            
+           
 
         }      
         private async Task GoToEditUser(int Id , string names)
@@ -143,11 +188,16 @@ namespace ProLoginprofile.Pages.Pagecomponents
             await ListProgramuser(Id);
             await SetCheckedToTrue();
             ShowEditRole = true;
+            JSRuntime.InvokeVoidAsync("console.log",ListProgramUsers);
 
         }
-        private void Cancel()
+        private async Task Cancel()
         {
             NavManager.NavigateTo("/UserProfile",true);
+            // await SetCheckedToTrue();
+            // StateHasChanged();
+            // ShowEditRole = false;
+            // await ShowEditRoleChanged.InvokeAsync(ShowEditRole);
         }
     }
 }

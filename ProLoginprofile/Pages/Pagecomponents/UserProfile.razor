@@ -15,7 +15,7 @@
     else
     {
         
-            <MudTable @ref="@_table" RowsPerPage="@pageSize" Items="@AllUsers" Breakpoint="Breakpoint.Sm"  Hover="true" Elevation="0">
+            <MudTable @ref="@_table" RowsPerPage="@pageSize" Items="@AllUsers" Breakpoint="Breakpoint.Sm" Dense="true" Hover="true" Elevation="0">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">UsersProfile</MudText>
                     <MudSpacer/>
@@ -24,11 +24,6 @@
                     AdornmentIcon="@Icons.Material.Filled.Search" 
                     IconSize="Size.Medium" T="string" ValueChanged="@(s=>Indexs(s))"
                     Class="mt-0"></MudTextField>
-                    @* <MudButton ButtonType="ButtonType.Submit"
-                    OnClick="@(()=>Indexs(searchString))"
-                    Variant="Variant.Filled" 
-                    Color="Color.Primary" 
-                    Class="ml-auto">Search</MudButton> *@
                 </ToolBarContent>
                 <HeaderContent>
                     <MudTh>ID</MudTh>
@@ -41,12 +36,13 @@
                     <MudTd DataLabel="Name">@context.login</MudTd>
                     <MudTd DataLabel="Email">@context.email</MudTd>
                     <MudTd>
-                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" OnClick="@(()=>GoToEditUser(context.id,context.login))" ></MudFab>
+                        <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Edit" Size="Size.Medium" OnClick="@(()=>GoToEditUser(context.id,context.login))" ></MudFab>
                     </MudTd>
                 </RowTemplate>
                 <PagerContent>
                     <MudPagination Class="pa-4" Selected="@pageon"
                     SelectedChanged="@PageChangAsync"
+                    Color="Color.Secondary"
                     BoundaryCount="1" MiddleCount="2"
                     Count="@(((dataCount-1)/_table.RowsPerPage)+1)"></MudPagination>
                 </PagerContent>
@@ -73,7 +69,7 @@ else
                                 <MudButton  Variant="Variant.Filled"  Color="Color.Info"
                                    StartIcon="@Icons.Material.Filled.Save" Class="mx-4">Save</MudButton>
                                 <MudButton Variant="Variant.Filled" Color="Color.Secondary"
-                                   StartIcon="@Icons.Material.Filled.Cancel" OnClick="@Cancel" Class="mx-4">Cancel</MudButton>
+                                   StartIcon="@Icons.Material.Filled.Cancel" OnClick="@(()=>Cancel())" Class="mx-4">Cancel</MudButton>
                         </MudGrid>
                     </CardHeaderContent>
                 </MudCardHeader>
@@ -81,10 +77,51 @@ else
                     <MudGrid >
                         <MudItem xs="3" >
                             <P>Role currently used</P>
-                            <MudSwitch @bind-Checked="@_checked3" ThumbIcon="@(_checked3==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(_checked3==true ? Color.Success : Color.Error)">บันทึกใบสั่งขาย</MudSwitch>
-                            <MudSwitch @bind-Checked="@_checked4" ThumbIcon="@(_checked4==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(_checked4==true ? Color.Success : Color.Error)"  >บันทึกใบขอผลิต</MudSwitch>
+                            <MudSwitch @bind-Checked="@Repair_Informations" ThumbIcon="@(Repair_Informations==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Repair_Informations==true ? Color.Success : Color.Error)"
+                            >บันทึกใบสั่งขาย
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Request_Modifies" ThumbIcon="@(Request_Modifies==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Request_Modifies==true ? Color.Success : Color.Error)"  
+                            >บันทึกใบขอผลิต
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Customers" ThumbIcon="@(Customers==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Customers==true ? Color.Success : Color.Error)"  
+                            >รายการลูกค้า
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Employees" ThumbIcon="@(Employees==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Employees==true ? Color.Success : Color.Error)"  
+                            >รายการพนักงาน
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Battery_Brands" ThumbIcon="@(Battery_Brands==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Battery_Brands==true ? Color.Success : Color.Error)"  
+                            >ยี่ห้อแบตเตอร์รี่
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Battery_Models" ThumbIcon="@(Battery_Models==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Battery_Models==true ? Color.Success : Color.Error)"  
+                            >รุ่นแบตเตอร์รี่
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Models" ThumbIcon="@(Models==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Models==true ? Color.Success : Color.Error)"  
+                            >รุ่นสินค้า
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Departments" ThumbIcon="@(Departments==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Departments==true ? Color.Success : Color.Error)"  
+                            >แผนก
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Grades" ThumbIcon="@(Grades==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Grades==true ? Color.Success : Color.Error)"  
+                            >เกรด
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@PMs" ThumbIcon="@(PMs==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(PMs==true ? Color.Success : Color.Error)"  
+                            >รายการ PM
+                            </MudSwitch>
+                            <MudSwitch @bind-Checked="@Sale_Areas" ThumbIcon="@(Sale_Areas==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(Sale_Areas==true ? Color.Success : Color.Error)"  
+                            >เขตการขาย
+                            </MudSwitch>
+
 
                             <ul>
                                 @foreach (var item in ListProgramUsers)
