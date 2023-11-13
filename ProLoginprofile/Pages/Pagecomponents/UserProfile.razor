@@ -77,58 +77,12 @@ else
                     <MudGrid >
                         <MudItem xs="3" >
                             <P>Role currently used</P>
-                            <MudSwitch @bind-Checked="@Repair_Informations" ThumbIcon="@(Repair_Informations==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Repair_Informations==true ? Color.Success : Color.Error)"
-                            >บันทึกใบสั่งขาย
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Request_Modifies" ThumbIcon="@(Request_Modifies==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Request_Modifies==true ? Color.Success : Color.Error)"  
-                            >บันทึกใบขอผลิต
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Customers" ThumbIcon="@(Customers==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Customers==true ? Color.Success : Color.Error)"  
-                            >รายการลูกค้า
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Employees" ThumbIcon="@(Employees==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Employees==true ? Color.Success : Color.Error)"  
-                            >รายการพนักงาน
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Battery_Brands" ThumbIcon="@(Battery_Brands==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Battery_Brands==true ? Color.Success : Color.Error)"  
-                            >ยี่ห้อแบตเตอร์รี่
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Battery_Models" ThumbIcon="@(Battery_Models==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Battery_Models==true ? Color.Success : Color.Error)"  
-                            >รุ่นแบตเตอร์รี่
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Models" ThumbIcon="@(Models==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Models==true ? Color.Success : Color.Error)"  
-                            >รุ่นสินค้า
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Departments" ThumbIcon="@(Departments==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Departments==true ? Color.Success : Color.Error)"  
-                            >แผนก
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Grades" ThumbIcon="@(Grades==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Grades==true ? Color.Success : Color.Error)"  
-                            >เกรด
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@PMs" ThumbIcon="@(PMs==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(PMs==true ? Color.Success : Color.Error)"  
-                            >รายการ PM
-                            </MudSwitch>
-                            <MudSwitch @bind-Checked="@Sale_Areas" ThumbIcon="@(Sale_Areas==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(Sale_Areas==true ? Color.Success : Color.Error)"  
-                            >เขตการขาย
-                            </MudSwitch>
-
-
-                            <ul>
-                                @foreach (var item in ListProgramUsers)
-                                {
-                                    <li>@item.name</li>
-                                }
-                            </ul>
+                            
+                            @foreach (var item in ListAllProgramUsers)
+                            {
+                                <MudSwitch @bind-Checked="@item.Isactive" ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                            ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)">@item.name</MudSwitch>
+                            }
                         </MudItem>
                         <MudItem xs="3" >
                             <p>All Role</p>
