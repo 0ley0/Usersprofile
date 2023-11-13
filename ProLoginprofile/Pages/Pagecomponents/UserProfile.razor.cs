@@ -21,6 +21,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
         [Inject] AppDBcontext? appDBcontext {get; set;}
         [Inject] IJSRuntime JSRuntime {get; set;}
         [Inject] NavigationManager NavManager { get; set; }
+        [Inject] IDialogService _dialogService {get; set;}
       
 
         private EventCallback<bool>ShowEditRoleChanged {get; set;}
@@ -29,6 +30,8 @@ namespace ProLoginprofile.Pages.Pagecomponents
         private List<Programs> ListProgramUsers = new();
         private List<Programs> ListAllProgramUsers = new();
         private List<Programs> datadup = new();
+        public List<Programs_Users> programs_Users = new();
+        public Programs_Users MyRoleUser = new();
        
 
         private Users User = new();
@@ -123,7 +126,6 @@ namespace ProLoginprofile.Pages.Pagecomponents
 
             foreach (var items in ListAllProgramUsers)
             {       
-
                 foreach(var itemsiduser in ListProgramUsers)
                 {
                     if (items.id == itemsiduser.id)
@@ -134,6 +136,56 @@ namespace ProLoginprofile.Pages.Pagecomponents
                 
             }
             
+        }
+
+        private async Task<List<Programs_Users>> UpdateRole()
+        {
+            // var userID = await appDBcontext.programs_users.FindAsync(updateUserRole.user_id);
+            foreach (var item in ListAllProgramUsers)
+            {
+               
+                    if (item.Isactive == true)
+                    {
+                        var NewUserRole = new Programs_Users
+                        {
+                            user_id = item.user_id,
+                            program_id = item.id
+                            
+                        };
+                        appDBcontext.programs_users.Add(NewUserRole);
+                        await appDBcontext.SaveChangesAsync();
+                    }
+                    else 
+                    {
+                         var NewUserRole = new Programs_Users
+                        {
+                            user_id = item.user_id,
+                            program_id = item.id
+                            
+                        };
+                        appDBcontext.programs_users.Remove(NewUserRole);
+                        await appDBcontext.SaveChangesAsync();
+                    }
+               
+            }
+            return new List<Programs_Users>();
+            
+        }
+
+        private async Task SaveAsync()
+        {
+            bool? result = await _dialogService.ShowMessageBox
+            (
+                "Update Confirmation",
+                "Updata can not undone!",
+                yesText: "Update!" , cancelText: "Cancel"
+            );
+                if (result ?? false)
+                {
+                    programs_Users.Remove(MyRoleUser);
+                    await UpdateRole();
+                    await Cancel();
+                }
         }      
         private async Task GoToEditUser(int Id , string names)
         {

@@ -67,7 +67,7 @@ else
                         <MudGrid>
                                 <MudText>Edit Role User : @namese</MudText>
                                 <MudButton  Variant="Variant.Filled"  Color="Color.Info"
-                                   StartIcon="@Icons.Material.Filled.Save" Class="mx-4">Save</MudButton>
+                                   StartIcon="@Icons.Material.Filled.Save" OnClick="@SaveAsync" Class="mx-4">Save</MudButton>
                                 <MudButton Variant="Variant.Filled" Color="Color.Secondary"
                                    StartIcon="@Icons.Material.Filled.Cancel" OnClick="@(()=>Cancel())" Class="mx-4">Cancel</MudButton>
                         </MudGrid>
