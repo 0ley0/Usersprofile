@@ -81,7 +81,7 @@ else
                             @foreach (var item in ListAllProgramUsers)
                             {
                                 <MudSwitch @bind-Checked="@item.Isactive" ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                            ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)">@item.name</MudSwitch>
+                            ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" >@item.name : "@(item.Isactive.ToString())"</MudSwitch>
                             }
                         </MudItem>
                         <MudItem xs="3" >

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
         private List<Programs> datadup = new();
         public List<Programs_Users> programs_Users = new();
         public Programs_Users MyRoleUser = new();
+        
        
 
         private Users User = new();
@@ -120,16 +122,15 @@ namespace ProLoginprofile.Pages.Pagecomponents
             return new List<Programs>();
         }
 
-        private async Task SetCheckedToTrue(int Id)
+        private async Task SetCheckedToTrue()
         {
-           var userids = await appDBcontext.users.FirstOrDefaultAsync(x => x.id.Equals(Id));
-
+           
             foreach (var items in ListAllProgramUsers)
             {       
                 foreach(var itemsiduser in ListProgramUsers)
                 {
                     if (items.id == itemsiduser.id)
-                    {
+                    {    
                         items.Isactive = true;
                     }
                 }       
@@ -138,37 +139,62 @@ namespace ProLoginprofile.Pages.Pagecomponents
             
         }
 
-        private async Task<List<Programs_Users>> UpdateRole()
+        private async Task UpdateRole()
         {
-            // var userID = await appDBcontext.programs_users.FindAsync(updateUserRole.user_id);
+            
+            var userId = User.id;
             foreach (var item in ListAllProgramUsers)
             {
-               
-                    if (item.Isactive == true)
+                
+                if (item.Isactive)
+                {
+                    var NewUserRole = new Programs_Users
                     {
-                        var NewUserRole = new Programs_Users
-                        {
-                            user_id = item.user_id,
-                            program_id = item.id
-                            
-                        };
-                        appDBcontext.programs_users.Add(NewUserRole);
-                        await appDBcontext.SaveChangesAsync();
-                    }
-                    else 
-                    {
-                         var NewUserRole = new Programs_Users
-                        {
-                            user_id = item.user_id,
-                            program_id = item.id
-                            
-                        };
-                        appDBcontext.programs_users.Remove(NewUserRole);
-                        await appDBcontext.SaveChangesAsync();
-                    }
-               
+                        user_id = userId,
+                        program_id = item.id
+                    };
+                    programs_Users.Remove(NewUserRole);
+                    appDBcontext.programs_users.Add(NewUserRole);
+                    JSRuntime.InvokeVoidAsync("console.log", NewUserRole);
+                }
+                await appDBcontext.SaveChangesAsync();
             }
-            return new List<Programs_Users>();
+            
+            // }
+            // foreach (var item in ListAllProgramUsers)
+            // {
+            //    var userID = await appDBcontext.programs_users.FirstOrDefaultAsync(x => x.user_id == item.user_id && x.program_id == item.id);
+            //         if (item.Isactive)
+            //         {
+            //             if (userID == null)
+            //             {
+            //                 var NewUserRole = new Programs_Users
+            //                 {
+            //                     user_id = item.user_id,
+            //                     program_id = item.id
+                            
+            //                 };
+            //                 appDBcontext.programs_users.Add(NewUserRole);
+            //             }
+                        
+            //         }
+            //         else 
+            //         {
+            //             if (userID != null)
+            //             {
+            //                 var NewUserRole = new Programs_Users
+            //                 {   
+            //                     user_id = item.user_id,
+            //                     program_id = item.id
+                            
+            //                 };
+            //                 appDBcontext.programs_users.Remove(NewUserRole);
+            //             }
+                        
+            //         }
+            //   JSRuntime.InvokeVoidAsync("console.log",  userID);
+            // }
+            //    await appDBcontext.SaveChangesAsync();
             
         }
 
@@ -182,9 +208,10 @@ namespace ProLoginprofile.Pages.Pagecomponents
             );
                 if (result ?? false)
                 {
-                    programs_Users.Remove(MyRoleUser);
+                    
                     await UpdateRole();
                     await Cancel();
+                    
                 }
         }      
         private async Task GoToEditUser(int Id , string names)
@@ -192,18 +219,17 @@ namespace ProLoginprofile.Pages.Pagecomponents
             namese = names;
             await GetUser(Id);
             await ListProgramuser(Id);
-            await SetCheckedToTrue(Id);
+            await SetCheckedToTrue();
             ShowEditRole = true;
-            JSRuntime.InvokeVoidAsync("console.log", SetCheckedToTrue(Id));
+            //JSRuntime.InvokeVoidAsync("console.log", SetCheckedToTrue(Id));
 
         }
         private async Task Cancel()
         {
-            //NavManager.NavigateTo("/UserProfile",true);
-            // await SetCheckedToTrue();
-            // StateHasChanged();
-            ShowEditRole = false;
-            await ShowEditRoleChanged.InvokeAsync(ShowEditRole);
+            NavManager.NavigateTo("/UserProfile",true);
+            StateHasChanged();
+            // ShowEditRole = false;
+            // await ShowEditRoleChanged.InvokeAsync(ShowEditRole);
         }
     }
 }
