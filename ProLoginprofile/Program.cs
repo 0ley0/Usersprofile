@@ -13,6 +13,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMudServices();
 builder.Services.AddDbContext<AppDBcontext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("MyConnectDB")));
+builder.Services.AddDbContext<AppDBcontext>(ServiceLifetime.Transient);
 
 var app = builder.Build();
 
