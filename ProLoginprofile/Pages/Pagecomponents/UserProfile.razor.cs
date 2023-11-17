@@ -25,18 +25,16 @@ namespace ProLoginprofile.Pages.Pagecomponents
         private List<Programs> ListProgramUsers = new();
         private List<Programs> ASListAllProgramUsers = new();
         private List<Programs> datadup = new();
-       
 
-        
-       
 
         private Users User = new();
+        private Users CheckUser = new();
         private int TypeEntry = 1;
         private int TypeEnquiry = 2;
         private int TypeReference = 3;
         private int TypeReport = 4;
         private bool ShowEditRole = false;
-        private string? namese;
+        private string? _name;
         private int pageon = 1;
         private string searchString = "";
         private int page = 0;
@@ -162,71 +160,63 @@ namespace ProLoginprofile.Pages.Pagecomponents
                 {                
                     if (item.Isactive)
                     {
-                    var NewMyRoleUser = new Programs_Users
-                    {
-                        user_id = userId,
-                        program_id = item.id
-                    };
-                    DeleteRole();
-                    appDBcontext.programs_users.Remove(NewMyRoleUser);
-                    appDBcontext.programs_users.Add(NewMyRoleUser);
-                    //JSRuntime.InvokeVoidAsync("console.log", NewMyRoleUser);  
+                        var NewMyRoleUser = new Programs_Users
+                        {
+                            user_id = userId,
+                            program_id = item.id
+                        };
+                        await DeleteRole();
+                        appDBcontext.programs_users.Remove(NewMyRoleUser);
+                        appDBcontext.programs_users.Add(NewMyRoleUser);
+                        //JSRuntime.InvokeVoidAsync("console.log", NewMyRoleUser);  
                     }                 
                 }
                     await appDBcontext.SaveChangesAsync();
                     appDBcontext.ChangeTracker.Clear(); 
-                    transaction.Commit();  
+                    transaction.Commit();
+                    string message = "Update Success!";
+                    Snackbar.Add(message, Severity.Success , config => 
+                        {
+                            config.CloseAfterNavigation = true;
+                        });  
             }
             catch (Exception)
             {      
-                transaction.Rollback();
+                    string message = "Update not Success!";
+                    Snackbar.Add(message, Severity.Error, config => 
+                    {
+                        config.CloseAfterNavigation = true;
+                    });
+                    transaction.Rollback();
             }
         }
 
         private async Task SaveAsync()
         {
             var UserInTableUser = User.id;
-            var CheakUseridInTable = appDBcontext.users.Where(x => x.id == UserInTableUser).AsNoTracking();
+            CheckUser = await appDBcontext.users.AsNoTracking().FirstOrDefaultAsync(x => x.id.Equals(UserInTableUser));
             bool? result = await _dialogService.ShowMessageBox
             (
                 "Update Confirmation",
                 "Updata can not undone!",
                 yesText: "Update!" , cancelText: "Cancel"
             );
-                if (result ?? false)
+                if (result ?? false && User.id == CheckUser.id)
                 {
-                     await UpdateRole();
-                     await Task.Delay(300);
-                     await Cancel();
-                    foreach (var item in CheakUseridInTable)
-                    {
-                        if (item.id == UserInTableUser)
-                        {  
-                            string message = "Update Success!";
-                            Snackbar.Add(message, Severity.Success, async config => 
-                            {
-                                config.CloseAfterNavigation = true;
-                            });
-                        }
-                        else
-                        {
-                            string message = "Update not Success!";
-                            Snackbar.Add(message, Severity.Error, config => 
-                            {
-                            config.CloseAfterNavigation = true;
-                            });
-                        }
-                    }
-                }       
+                    await UpdateRole();
+                    await Task.Delay(300);
+                    await Cancel();
+                }  
+                  
         } 
 
         private async Task GoToEditUser(int Id , string names)
         {
-            namese = names;
+            _name = names;
             await GetUser(Id);
             await ListProgramuser(Id);
             await SetCheckedToTrue();
-            JSRuntime.InvokeVoidAsync("console.log", ASListAllProgramUsers);
+            // JSRuntime.InvokeVoidAsync("console.log", ASListAllProgramUsers);
             ShowEditRole = true;
         }
 

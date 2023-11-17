@@ -53,7 +53,7 @@
 }
 else
 {
-    if (ListProgramUsers == null)
+    if (ASListAllProgramUsers == null)
     {
         <MudProgressCircular Color="Color.Default" Indeterminate="true" />
     }
@@ -65,80 +65,95 @@ else
                 <MudCardHeader>
                     <CardHeaderContent>
                         <MudGrid>
-                                <MudText>Edit Role User : @namese</MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.ManageAccounts" Size="Size.Large" Class="mx-4"></MudIcon>
+                                <MudText Typo="Typo.h6">User : @_name</MudText> 
                                 <MudButton  Variant="Variant.Filled"  Color="Color.Info"
                                    StartIcon="@Icons.Material.Filled.Save" OnClick="@SaveAsync" Class="mx-4">Save</MudButton>
                                 <MudButton Variant="Variant.Filled" Color="Color.Secondary"
                                    StartIcon="@Icons.Material.Filled.Cancel" OnClick="@(()=>Cancel())" Class="mx-4">Cancel</MudButton>
                         </MudGrid>
+                        <br/>
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
                     <MudGrid>
-                        <MudItem xs="12" sm="6" >
-                            <P>Type Entry</P> 
+
+                        <MudPaper Class="pa-16 ma-2  mud-width-full  align-center " >
+                            <MudText>Type Entry</MudText>
+                            <br/>
+                            <hr/>
+                            <MudGrid Justify="Justify.Center">
+                                <MudItem xs="12" sm="6" >
                                 @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeEntry).Take(10))
                                 {
                                 <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
                                 ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name </MudSwitch>
                                 }              
-                        </MudItem>
-                        <MudItem xs="12" sm="6" >
-                            <P>Type Entry</P> 
+                                </MudItem>
+                                <MudItem xs="12" sm="6" >
                                 @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeEntry).Skip(10))
                                 {
                                 <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
                                 ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name </MudSwitch>
                                 }              
-                        </MudItem>
-                          <MudItem xs="12" sm="6" >
-                            <P>Type Enquiry</P> 
-                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeEnquiry).Take(10))
-                                {
-                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
-                                }              
-                        </MudItem>
-                        <MudItem xs="12" sm="6" >
-                            <P>Type Enquiry</P> 
-                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeEnquiry).Skip(10))
-                                {
-                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
-                                }              
-                        </MudItem>
-                        <MudItem xs="12" sm="6" >
-                            <P>Type Reference</P> 
-                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReference).Take(10))
-                                {
-                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
-                                }              
-                        </MudItem>
-                        <MudItem xs="12" sm="6" >
-                            <P>Type Reference</P> 
-                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReference).Skip(10))
-                                {
-                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
-                                }              
-                        </MudItem>
-                        <MudItem xs="12" sm="6" >
-                            <P>Type Report</P> 
-                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReport).Take(10))
-                                {
-                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
-                                }              
-                        </MudItem>
-                        <MudItem xs="12" sm="6" >
-                            <P>Type Report</P> 
-                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReport).Skip(10))
-                                {
-                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
-                                }              
-                        </MudItem>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+
+                                <MudPaper Class="pa-16 ma-2  mud-width-full"  >
+                                        <MudGrid >
+                                            <MudItem xs="12" sm="6">
+                                                <MudText>Type Enquiry</MudText>
+                                                <br/>
+                                                <hr/>
+                                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeEnquiry).Take(10))
+                                                {
+                                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
+                                                }              
+                                                </MudItem>
+                                            <MudItem xs="12" sm="6" > 
+                                                <MudText>Type Report</MudText>
+                                                <br/>
+                                                <hr/>
+                                                @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReport).Take(10))
+                                                {
+                                                <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                                ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
+                                                }              
+                                            </MudItem>
+                                        </MudGrid>
+                                </MudPaper>                      
+
+                        <MudPaper Class="pa-16 ma-2  mud-width-full">
+                            <MudText>Type Reference</MudText>
+                            <br/>
+                            <hr/>
+                            <MudGrid Justify="Justify.Center">
+                                <MudItem xs="6" sm="3" > 
+                                    @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReference).Take(10))
+                                    {
+                                    <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                    ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
+                                    }              
+                                </MudItem>
+                                <MudItem xs="6" sm="3" >
+                                        @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReference).Skip(10).Take(10))
+                                        {
+                                        <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                        ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
+                                        }              
+                                </MudItem>
+                                 <MudItem xs="6" sm="3" >
+                                        @foreach (var item in ASListAllProgramUsers.Where(x => x.program_type_id == TypeReference).Skip(20))
+                                        {
+                                        <MudSwitch @bind-Checked="@item.Isactive"  ThumbIcon="@(item.Isactive==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                        ThumbIconColor="@(item.Isactive==true ? Color.Success : Color.Error)" > @item.name</MudSwitch>
+                                        }              
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                        
                     </MudGrid>
                 </MudCardContent>
             </MudItem>
