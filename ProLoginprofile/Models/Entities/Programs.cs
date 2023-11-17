@@ -12,7 +12,7 @@ namespace ProLoginprofile.Models.Entities
         public int id { get; set; }
         public string? name { get; set; }
         public bool Isactive { get; set; } = false;
-        public int user_Id { get; set; }
+        public int program_type_id { get; set; }
         
     }
 }

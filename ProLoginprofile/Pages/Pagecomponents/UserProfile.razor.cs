@@ -1,19 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.JSInterop;
 using MudBlazor;
 using ProLoginprofile.Models;
 using ProLoginprofile.Models.Entities;
+
+
 
 namespace ProLoginprofile.Pages.Pagecomponents
 {
@@ -23,22 +16,25 @@ namespace ProLoginprofile.Pages.Pagecomponents
         [Inject] IJSRuntime JSRuntime {get; set;}
         [Inject] NavigationManager NavManager { get; set; }
         [Inject] IDialogService _dialogService {get; set;}
+        [Inject] ISnackbar Snackbar {get; set;}
       
-
+        
         private EventCallback<bool>ShowEditRoleChanged {get; set;}
 
         private List<Users> AllUsers = new();
         private List<Programs> ListProgramUsers = new();
-        private List<Programs> ListAllProgramUsers = new();
+        private List<Programs> ASListAllProgramUsers = new();
         private List<Programs> datadup = new();
-        public List<Programs_Users> programs_Users = new();
-        public Programs_Users MyRoleUser = new();
+       
 
         
        
 
         private Users User = new();
-
+        private int TypeEntry = 1;
+        private int TypeEnquiry = 2;
+        private int TypeReference = 3;
+        private int TypeReport = 4;
         private bool ShowEditRole = false;
         private string? namese;
         private int pageon = 1;
@@ -46,6 +42,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
         private int page = 0;
         private int pageSize = 7;
         private int dataCount = 1000;
+        private bool _refer = false;
 
         private MudTable<Users>? _table;
         
@@ -56,6 +53,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
         {
             await GetAllUsers(page,pageSize);
         }
+
         private async Task<List<Users>> GetAllUsers (int p, int ps)
         {
             dataCount = await appDBcontext.users.Select(x => x.id).CountAsync();
@@ -66,12 +64,14 @@ namespace ProLoginprofile.Pages.Pagecomponents
             .ToListAsync();
             return AllUsers;
         }
+
         private async Task PageChangAsync(int i)
         {
             pageon = i;
             _table.NavigateTo(i-1);
             await GetAllUsers((i-1)*pageSize,pageSize);
         }
+
         private async Task Indexs(string searchString)
         {
             var empqery = from x in appDBcontext.users select x;
@@ -83,6 +83,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
             dataCount = await empqery.AsNoTracking().CountAsync();
             AllUsers = await empqery.AsNoTracking().OrderBy(x => x.id).ToListAsync();
         }
+
         private async Task<Users> GetUser(int Id)
         {
             User = await appDBcontext.users.FirstOrDefaultAsync(x => x.id.Equals(Id));
@@ -94,6 +95,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
                 ListProgramUsers = await appDBcontext.programs
                 .Where(p => appDBcontext.programs_users
                 .Any(x => x.program_id == p.id && x.user_id == Id))
+                .OrderBy(o => o.id)
                 .Select(c => new Programs()
                 {
                     id = c.id,
@@ -101,24 +103,19 @@ namespace ProLoginprofile.Pages.Pagecomponents
                 })
                 .ToListAsync();
 
-                 ListAllProgramUsers = await appDBcontext.programs
-                .Where(p => appDBcontext.programs_users
-                .Any(o => o.program_id == p.id))
-                .Select(c => new Programs()
-                {
-                    id = c.id,
-                    name = c.name
+                 ASListAllProgramUsers = await appDBcontext.programs
+                .Select( x => new Programs {id = x.id , name = x.name , program_type_id = x.program_type_id})
+                .OrderBy(x => x.id).ToListAsync();
 
-                }).ToListAsync();
-
-                datadup = ListProgramUsers.Concat(ListAllProgramUsers)
-                .ToLookup(p => p.id)
-                .Select(c => c.Aggregate((l1, l2) => new Programs
-                {
-                    id = l2.id - l1.id
+                // datadup = ListProgramUsers.Concat(ASListAllProgramUsers)
+                // .ToLookup(p => p.id)
+                // .Select(c => c.Aggregate((l1, l2) => new Programs
+                // {
+                //     id = l2.id - l1.id
                             
-                })).ToList();
+                // })).ToList();
 
+           
 
             return new List<Programs>();
         }
@@ -126,7 +123,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
         private async Task SetCheckedToTrue()
         {
            
-            foreach (var items in ListAllProgramUsers)
+            foreach (var items in ASListAllProgramUsers)
             {       
                 foreach(var itemsiduser in ListProgramUsers)
                 {
@@ -134,28 +131,37 @@ namespace ProLoginprofile.Pages.Pagecomponents
                     {    
                         items.Isactive = true;
                     }
+                   
                 }       
                 
             }
-            
         }
         
         private async Task DeleteRole()
-        {
-            var userID = User.id;
-            appDBcontext.programs_users.Where(x => x.user_id == userID).ExecuteDelete();
-          
+        {   
+            try
+            {
+                var userID = User.id;
+                appDBcontext.programs_users.AsNoTracking().Where(x => x.user_id == userID).ExecuteDelete();     
+            }
+            catch (Exception er)
+            {
+                JSRuntime.InvokeVoidAsync("console.log", er);
+                throw new Exception(er.ToString());
+                
+            }            
         }
 
         private async Task UpdateRole()
         {
-            
+            using var transaction  = appDBcontext.Database.BeginTransaction();
             var userId = User.id;
-            foreach (var item in ListAllProgramUsers)
+            try
             {
-                
-                if (item.Isactive)
-                {
+                foreach (var item in ASListAllProgramUsers)
+                {                
+                    if (item.Isactive)
+                    {
                     var NewMyRoleUser = new Programs_Users
                     {
                         user_id = userId,
@@ -165,15 +171,22 @@ namespace ProLoginprofile.Pages.Pagecomponents
                     appDBcontext.programs_users.Remove(NewMyRoleUser);
                     appDBcontext.programs_users.Add(NewMyRoleUser);
                     //JSRuntime.InvokeVoidAsync("console.log", NewMyRoleUser);  
+                    }                 
                 }
-                  
-                   
+                    await appDBcontext.SaveChangesAsync();
+                    appDBcontext.ChangeTracker.Clear(); 
+                    transaction.Commit();  
             }
-            await appDBcontext.SaveChangesAsync();
+            catch (Exception)
+            {      
+                transaction.Rollback();
+            }
         }
 
         private async Task SaveAsync()
         {
+            var UserInTableUser = User.id;
+            var CheakUseridInTable = appDBcontext.users.Where(x => x.id == UserInTableUser).AsNoTracking();
             bool? result = await _dialogService.ShowMessageBox
             (
                 "Update Confirmation",
@@ -182,27 +195,46 @@ namespace ProLoginprofile.Pages.Pagecomponents
             );
                 if (result ?? false)
                 {
+                     await UpdateRole();
+                     await Task.Delay(300);
+                     await Cancel();
+                    foreach (var item in CheakUseridInTable)
+                    {
+                        if (item.id == UserInTableUser)
+                        {  
+                            string message = "Update Success!";
+                            Snackbar.Add(message, Severity.Success, async config => 
+                            {
+                                config.CloseAfterNavigation = true;
+                            });
+                        }
+                        else
+                        {
+                            string message = "Update not Success!";
+                            Snackbar.Add(message, Severity.Error, config => 
+                            {
+                            config.CloseAfterNavigation = true;
+                            });
+                        }
+                    }
+                }       
+        } 
 
-                    await UpdateRole();
-                    await Cancel();
-                    
-                }
-        }      
         private async Task GoToEditUser(int Id , string names)
         {
             namese = names;
             await GetUser(Id);
             await ListProgramuser(Id);
             await SetCheckedToTrue();
+            JSRuntime.InvokeVoidAsync("console.log", ASListAllProgramUsers);
             ShowEditRole = true;
-           
-
         }
+
         private async Task Cancel()
         {
-            NavManager.NavigateTo("UserProfile",true);
-            // ShowEditRole = false;
-            // await ShowEditRoleChanged.InvokeAsync(ShowEditRole);
+            StateHasChanged();
+            ShowEditRole = false;
+            await ShowEditRoleChanged.InvokeAsync(ShowEditRole);
         }
     }
 }
