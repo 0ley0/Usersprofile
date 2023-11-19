@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.JSInterop;
@@ -40,7 +41,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
         private int page = 0;
         private int pageSize = 7;
         private int dataCount = 1000;
-        private bool _refer = false;
+        private string _refer_on = null;
 
         private MudTable<Users>? _table;
         
@@ -125,11 +126,7 @@ namespace ProLoginprofile.Pages.Pagecomponents
             {       
                 foreach(var itemsiduser in ListProgramUsers)
                 {
-                    if (items.id == itemsiduser.id)
-                    {    
-                        items.Isactive = true;
-                    }
-                   
+                    if (items.id == itemsiduser.id){ items.Isactive = true; _refer_on = "1";}
                 }       
                 
             }
@@ -169,6 +166,12 @@ namespace ProLoginprofile.Pages.Pagecomponents
                         appDBcontext.programs_users.Remove(NewMyRoleUser);
                         appDBcontext.programs_users.Add(NewMyRoleUser);
                         //JSRuntime.InvokeVoidAsync("console.log", NewMyRoleUser);  
+                    }
+                    else 
+                    {
+                    
+                       if (userId == User.id){await DeleteRole();}
+                        
                     }                 
                 }
                     await appDBcontext.SaveChangesAsync();
@@ -178,7 +181,8 @@ namespace ProLoginprofile.Pages.Pagecomponents
                     Snackbar.Add(message, Severity.Success , config => 
                         {
                             config.CloseAfterNavigation = true;
-                        });  
+                        });
+
             }
             catch (Exception)
             {      
@@ -206,6 +210,14 @@ namespace ProLoginprofile.Pages.Pagecomponents
                     await UpdateRole();
                     await Task.Delay(300);
                     await Cancel();
+                }
+                else 
+                {
+                    string message = "Cancel to Update!";
+                    Snackbar.Add(message, Severity.Warning, config => 
+                    {
+                        config.CloseAfterNavigation = true;
+                    });
                 }  
                   
         } 
